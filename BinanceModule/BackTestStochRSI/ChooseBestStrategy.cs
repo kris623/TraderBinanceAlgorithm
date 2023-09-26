@@ -32,6 +32,7 @@
                     ref klines,
                     new StochRSIConfig
                     {
+                        Symbol = "IDUSDT",
                         ShowConsole = true,
                         BackTestType = BackTestType.StochRSI,
                         Interval = interval,

@@ -167,14 +167,14 @@ namespace BinanceModule.BackTestRSI
                 #endregion
 
                 #region DetailedObject
-                EquityCurve_Class Ec_Class = new EquityCurve_Class();
+                EquityCurve_Class Ec_Class = new();
                 EquityCurve[i] = BackTestConfig.Balance + PositionValue * Position;
                 Ec_Class.EquityCurve = EquityCurve[i];
                 Ec_Class.CurrentPrice = _tmpClosePrice;
                 Ec_Class.Hold = Position != 0.0M ? 1 : 0;
                 Ec_Class.CurrentCapital = BackTestConfig.Balance + _tmpClosePrice * Position;
                 EqClass[i] = Ec_Class;
-                currentCapital[i] = BackTestConfig.Balance + _tmpClosePrice * Position;
+                CurrentCapital[i] = BackTestConfig.Balance + _tmpClosePrice * Position;
                 #endregion
             }
 

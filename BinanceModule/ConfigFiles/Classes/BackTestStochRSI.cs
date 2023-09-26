@@ -19,7 +19,7 @@
         internal double[] StochRsiClose { get; set; }
         internal double[] StochRsiCloseSignal { get; set; }
         internal decimal[] EquityCurve { get; set; }
-        internal decimal[] currentCapital { get; set; }
+        internal decimal[] CurrentCapital { get; set; }
         internal EquityCurve_Class[] EqClass { get; set; }
         internal List<TimeResultStochRSI> TimeResultStochRSI { get; set; }
         internal StochRSIConfig BackTestConfig { get; set; }
@@ -27,7 +27,7 @@
         {
             BackTestConfig = backTestConfig;
             EquityCurve = new decimal[backTestConfig.KlinesLength];
-            currentCapital = new decimal[backTestConfig.KlinesLength];
+            CurrentCapital = new decimal[backTestConfig.KlinesLength];
             EqClass = new EquityCurve_Class[backTestConfig.KlinesLength];
             TimeResultStochRSI = new List<TimeResultStochRSI>();
             StochRsiClose = new double[backTestConfig.KlinesLength];
@@ -38,7 +38,7 @@
 
     public class BacktestResult<T> where T : class
     {
-        public required T Configuration { get; set; }
+        public T? Configuration { get; set; }
         public decimal TotalProfitLoss { get; set; }
         public decimal TotalProfitLossLast { get; set; }
         public int NumberOfTrades { get; set; }
