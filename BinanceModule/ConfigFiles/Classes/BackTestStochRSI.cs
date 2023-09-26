@@ -10,19 +10,19 @@
 
     public class StochRSIBackTesterVariables
     {
-        public decimal position { get; set; }
-        public decimal positionValue { get; set; }
-        public decimal totalProfitLoss { get; set; }
-        public int numberOfTrades { get; set; }
-        public int numberOfWinningTrades { get; set; }
-        public int numberOfLosingTrades { get; set; }
-        public double[] StochRsiClose { get; set; }
-        public double[] StochRsiCloseSignal { get; set; }
-        public decimal[] EquityCurve { get; set; }
-        public decimal[] currentCapital { get; set; }
-        public EquityCurve_Class[] EqClass { get; set; }
-        public List<TimeResultStochRSI> TimeResultStochRSI { get; set; }
-        public StochRSIConfig BackTestConfig { get; set; }
+        internal decimal Position { get; set; }
+        internal decimal PositionValue { get; set; }
+        internal decimal TotalProfitLoss { get; set; }
+        internal int NumberOfTrades { get; set; }
+        internal int NumberOfWinningTrades { get; set; }
+        internal int NumberOfLosingTrades { get; set; }
+        internal double[] StochRsiClose { get; set; }
+        internal double[] StochRsiCloseSignal { get; set; }
+        internal decimal[] EquityCurve { get; set; }
+        internal decimal[] currentCapital { get; set; }
+        internal EquityCurve_Class[] EqClass { get; set; }
+        internal List<TimeResultStochRSI> TimeResultStochRSI { get; set; }
+        internal StochRSIConfig BackTestConfig { get; set; }
         public StochRSIBackTesterVariables(StochRSIConfig backTestConfig)
         {
             BackTestConfig = backTestConfig;
@@ -36,25 +36,20 @@
     }
 
 
-    public class BacktestResult
+    public class BacktestResult<T> where T : class
     {
-        public EquityCurve_Class[]? EquityCurve_Class { get; set; }
-        public double[]? EquityCurve { get; set; }
-        public List<TimeResultStochRSI>? TimeResultStochRSIAll { get; set; }
-        public decimal[]? CurrentCapital { get; set; }
+        public required T Configuration { get; set; }
         public decimal TotalProfitLoss { get; set; }
         public decimal TotalProfitLossLast { get; set; }
         public int NumberOfTrades { get; set; }
         public int NumberOfWinningTrades { get; set; }
         public int NumberOfLosingTrades { get; set; }
         public double WinRate { get; set; }
-        public int StochRSIValue { get; set; }
-        public int StochRSIPeriodValue { get; set; }
-        public double stopLossValue { get; set; }
-        public double takeProfitValue { get; set; }
-        public string? intervalString { get; set; }
-        public int buyStochRSI { get; set; }
-        public int sellStochRSI { get; set; }
+
+        //public EquityCurve_Class[]? EquityCurve_Class { get; set; }
+        //public double[]? EquityCurve { get; set; }
+        //public List<TimeResultStochRSI>? TimeResultStochRSIAll { get; set; }
+        // public decimal[]? CurrentCapital { get; set; }
     }
 
     public class TimeResultStochRSI

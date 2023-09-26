@@ -20,8 +20,8 @@
     {
         public int Period { get; set; } = 14;
         public int Smooth { get; set; } = 4;
-        public int SellStochRSI { get; set; } = 90;
-        public int BuyStochRSI { get; set; } = 10;
+        public int SellSignalStochRSI { get; set; } = 90;
+        public int BuySignalStochRSI { get; set; } = 10;
     }
 
     public class RSIConfig : Config

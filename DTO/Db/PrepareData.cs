@@ -8,7 +8,7 @@
 
     public static class PrepareData
     {
-        public static StrategyMemory ObjectPrepareStochRSI(ref BackTest<StochRSIConfig> backTest, ref BacktestResult backtestResult)
+        public static StrategyMemory ObjectPrepareStochRSI(ref BackTest<StochRSIConfig> backTest, ref BacktestResult<StochRSIConfig> backtestResult)
         {
             return new StrategyMemory
             {

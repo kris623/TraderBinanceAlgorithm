@@ -11,7 +11,7 @@ namespace BinanceModule.BackTestRSI
     {
         bool CheckTakeProfit(decimal positionValue, decimal position, decimal closePrice);
         bool CheckTakeLoss(decimal positionValue, decimal position, decimal closePrice);
-        BacktestResult Run(double[] closePrices, int variableSell, int variableBuy, DateTime[] closeTime);
+        BacktestResult<StochRSIConfig> Run(double[] closePrices, int variableSell, int variableBuy, DateTime[] closeTime);
     }
 
     public class StochRSIBackTester : StochRSIBackTesterVariables, IStochRSIBackTester
@@ -51,41 +51,41 @@ namespace BinanceModule.BackTestRSI
             return (lastPrice - actualPrice) >= (lastPrice * StopLoss);
         }
 
-        public TimeResultStochRSI GetTimeResultStochRSI(decimal closePrice, DateTime closeTime, decimal stochRsiClose, decimal stochRsiCloseSignal)
-        { 
-            return new TimeResultStochRSI { BuyCoinPrice = closePrice, StartDateClose = closeTime, EndCloseStochRSI_K = stochRsiClose, StartCloseStochRSI_D = stochRsiCloseSignal } ;
-        }
+        //public TimeResultStochRSI GetTimeResultStochRSI(decimal closePrice, DateTime closeTime, decimal stochRsiClose, decimal stochRsiCloseSignal)
+        //{ 
+        //    return new TimeResultStochRSI { BuyCoinPrice = closePrice, StartDateClose = closeTime, EndCloseStochRSI_K = stochRsiClose, StartCloseStochRSI_D = stochRsiCloseSignal } ;
+        //}
 
-        public BacktestResult Run(double[] closePrices, int stochRsiSell, int strochRsiBuy, DateTime[] closeTime)
+        public BacktestResult<StochRSIConfig> Run(double[] closePrices, int stochRsiSell, int strochRsiBuy, DateTime[] closeTime)
         {
             for (int i = 100; i < closePrices.Length; i++)
             {
 
                 (SignalType, PriceType) signal = 
-                    position != 0.0M ?
+                    Position != 0.0M ?
                     StochRSISignals.StochRSIShouldSell(StochRsiClose, i, StochRsiCloseSignal, stochRsiSell) :
                     StochRSISignals.StochRSIShouldBuy(StochRsiClose, i, StochRsiCloseSignal, strochRsiBuy);
 
                 decimal _tmpClosePrice = (decimal)closePrices[i];
-                bool _tmpTakeProfit = CheckTakeProfit(positionValue, position, _tmpClosePrice);
-                bool _tmpStopLoss = CheckTakeLoss(positionValue, position, _tmpClosePrice);
+                bool _tmpTakeProfit = CheckTakeProfit(PositionValue, Position, _tmpClosePrice);
+                bool _tmpStopLoss = CheckTakeLoss(PositionValue, Position, _tmpClosePrice);
 
 
-                if (position != 0.0M && (_tmpTakeProfit || _tmpStopLoss))
+                if (Position != 0.0M && (_tmpTakeProfit || _tmpStopLoss))
                 {
-                    decimal profitLoss = (_tmpClosePrice - positionValue) / positionValue;
-                    totalProfitLoss += profitLoss;
-                    BackTestConfig.Balance += (decimal)(_tmpClosePrice * position - TransactionCosts);
-                    position = 0.0M;
-                    positionValue = 0.0M;
-                    numberOfTrades++;
+                    decimal profitLoss = (_tmpClosePrice - PositionValue) / PositionValue;
+                    TotalProfitLoss += profitLoss;
+                    BackTestConfig.Balance += (decimal)(_tmpClosePrice * Position - TransactionCosts);
+                    Position = 0.0M;
+                    PositionValue = 0.0M;
+                    NumberOfTrades++;
 
                     if (profitLoss > 0)
-                        numberOfWinningTrades++;
+                        NumberOfWinningTrades++;
                     else
-                        numberOfLosingTrades++;
+                        NumberOfLosingTrades++;
 
-                    TimeResultStochRSI.Add(GetTimeResultStochRSI(_tmpClosePrice, closeTime[i], (decimal)StochRsiClose[i], (decimal)StochRsiCloseSignal[i]));
+                    //TimeResultStochRSI.Add(GetTimeResultStochRSI(_tmpClosePrice, closeTime[i], (decimal)StochRsiClose[i], (decimal)StochRsiCloseSignal[i]));
 
                     #region console#0
                     ////Console
@@ -97,7 +97,7 @@ namespace BinanceModule.BackTestRSI
                     #endregion
 
                 }
-                else if (signal.Item1 == SignalType.Buy && position == 0.0M)
+                else if (signal.Item1 == SignalType.Buy && Position == 0.0M)
                 {
                     decimal priceBuy = 0;
                     if (signal.Item2 == PriceType.Close)
@@ -106,12 +106,12 @@ namespace BinanceModule.BackTestRSI
                     }
 
                     //Update data
-                    position = BackTestConfig.Balance / priceBuy;
-                    positionValue = priceBuy;
-                    BackTestConfig.Balance -= (decimal)(positionValue * position);
-                    TransactionCosts = position * priceBuy * BackTestConfig.TransactionCosts;
+                    Position = BackTestConfig.Balance / priceBuy;
+                    PositionValue = priceBuy;
+                    BackTestConfig.Balance -= (decimal)(PositionValue * Position);
+                    TransactionCosts = Position * priceBuy * BackTestConfig.TransactionCosts;
 
-                    TimeResultStochRSI.Add(GetTimeResultStochRSI(_tmpClosePrice, closeTime[i], (decimal)StochRsiClose[i], (decimal)StochRsiCloseSignal[i]));
+                    //TimeResultStochRSI.Add(GetTimeResultStochRSI(_tmpClosePrice, closeTime[i], (decimal)StochRsiClose[i], (decimal)StochRsiCloseSignal[i]));
 
                     #region console#1
                     if (BackTestConfig.ShowConsole)
@@ -122,26 +122,26 @@ namespace BinanceModule.BackTestRSI
                     }
                     #endregion
                 }
-                else if (signal.Item1 == SignalType.Sell && position != 0.0M)
+                else if (signal.Item1 == SignalType.Sell && Position != 0.0M)
                 {
                     decimal priceSell = 0;
                     if (signal.Item2 == PriceType.Close)
                         priceSell = _tmpClosePrice;//closePrices[i];
 
-                    decimal profitLoss = (priceSell - positionValue) / positionValue;
+                    decimal profitLoss = (priceSell - PositionValue) / PositionValue;
 
                     if (profitLoss > 0)
-                        numberOfWinningTrades++;
+                        NumberOfWinningTrades++;
                     else
-                        numberOfLosingTrades++;
+                        NumberOfLosingTrades++;
 
-                    totalProfitLoss += profitLoss;
-                    BackTestConfig.Balance += (decimal)(priceSell * position - TransactionCosts);
-                    position = 0.0M;
-                    positionValue = 0.0M;
-                    numberOfTrades++;
+                    TotalProfitLoss += profitLoss;
+                    BackTestConfig.Balance += (decimal)(priceSell * Position - TransactionCosts);
+                    Position = 0.0M;
+                    PositionValue = 0.0M;
+                    NumberOfTrades++;
 
-                    TimeResultStochRSI.Add(GetTimeResultStochRSI(_tmpClosePrice, closeTime[i], (decimal)StochRsiClose[i], (decimal)StochRsiCloseSignal[i]));
+                    //TimeResultStochRSI.Add(GetTimeResultStochRSI(_tmpClosePrice, closeTime[i], (decimal)StochRsiClose[i], (decimal)StochRsiCloseSignal[i]));
 
 
                     #region console#2
@@ -158,7 +158,7 @@ namespace BinanceModule.BackTestRSI
                 //EveryCycle
                 else if (true)
                 {
-                    decimal current = (BackTestConfig.Balance != 0) ? BackTestConfig.Balance : _tmpClosePrice * position - TransactionCosts;
+                    decimal current = (BackTestConfig.Balance != 0) ? BackTestConfig.Balance : _tmpClosePrice * Position - TransactionCosts;
                     if (BackTestConfig.ShowConsole)
                     {
                         Console.WriteLine($"({closeTime[i]}) Price:{closePrices[i]} i:{i} {StochRsiClose[i]:N2} {StochRsiCloseSignal[i]:N2} Balance:{current:N2}"); ;
@@ -168,30 +168,30 @@ namespace BinanceModule.BackTestRSI
 
                 #region DetailedObject
                 EquityCurve_Class Ec_Class = new EquityCurve_Class();
-                EquityCurve[i] = BackTestConfig.Balance + positionValue * position;
+                EquityCurve[i] = BackTestConfig.Balance + PositionValue * Position;
                 Ec_Class.EquityCurve = EquityCurve[i];
                 Ec_Class.CurrentPrice = _tmpClosePrice;
-                Ec_Class.Hold = position != 0.0M ? 1 : 0;
-                Ec_Class.CurrentCapital = BackTestConfig.Balance + _tmpClosePrice * position;
+                Ec_Class.Hold = Position != 0.0M ? 1 : 0;
+                Ec_Class.CurrentCapital = BackTestConfig.Balance + _tmpClosePrice * Position;
                 EqClass[i] = Ec_Class;
-                currentCapital[i] = BackTestConfig.Balance + _tmpClosePrice * position;
+                currentCapital[i] = BackTestConfig.Balance + _tmpClosePrice * Position;
                 #endregion
             }
 
-            double winRate = (double)numberOfWinningTrades / numberOfTrades * 100;
+            double winRate = (double)NumberOfWinningTrades / NumberOfTrades * 100;
 
-            return new BacktestResult()
+            return new BacktestResult<StochRSIConfig>()
             {
-                TimeResultStochRSIAll = TimeResultStochRSI,
+                //TimeResultStochRSIAll = TimeResultStochRSI,
                 //EquityCurve = equityCurve,
-                CurrentCapital = currentCapital,
-                EquityCurve_Class = EqClass,
+                //CurrentCapital = currentCapital,
+                //EquityCurve_Class = EqClass,
                 TotalProfitLossLast = EquityCurve.Last(),
                 TotalProfitLoss = BackTestConfig.Balance == 0 ? 
                 EquityCurve.Last() - BackTestConfig.BalanceStart : BackTestConfig.Balance - BackTestConfig.BalanceStart,
-                NumberOfTrades = numberOfTrades,
-                NumberOfWinningTrades = numberOfWinningTrades,
-                NumberOfLosingTrades = numberOfLosingTrades,
+                NumberOfTrades = NumberOfTrades,
+                NumberOfWinningTrades = NumberOfWinningTrades,
+                NumberOfLosingTrades = NumberOfLosingTrades,
                 WinRate = winRate
             };
         }

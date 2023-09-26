@@ -27,16 +27,16 @@ namespace Infrastructure.Services.BinanceService
             });
         }
 
-        public async Task<List<Binance.Net.Interfaces.IBinanceKline>> GetKlinesAsync(string symbol, KlineInterval interval, int limit = 1000)
+        public async Task<List<IBinanceKline>> GetKlinesAsync(string symbol, KlineInterval interval, int limit = 1000)
         {
-            logger.LogInformation($"async Task<List<Binance.Net.Interfaces.IBinanceKline>> GetKlines(int Limit, string Pair, KlineInterval Interval)");
+            logger.LogInformation($"async Task<List<Binance.Net.Interfaces.IBinanceKline>> GetKlines(string {symbol}, KlineInterval {interval}, int {limit})");
             var klines = await binanceClient.SpotApi.ExchangeData.GetKlinesAsync(symbol, interval, null, null, limit);
             return klines.Data.ToList();
         }
 
         public async Task<List<IBinanceKline>> GetKlinesBatchedAsync(string symbol, KlineInterval interval, DateTime start, DateTime end)
         {
-            logger.LogInformation($"List<IBinanceKline> GetKlinesBatched(string symbol, KlineInterval interval, DateTime start, DateTime end)");
+            logger.LogInformation($"List<IBinanceKline> GetKlinesBatched(string {symbol}, KlineInterval {interval}, DateTime {start}, DateTime {end})");
 
             List<IBinanceKline> klines = new List<IBinanceKline>();
             DateTime startTime = (start);
